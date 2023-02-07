@@ -29,7 +29,6 @@ const App = () => {
   };
 
   const vote = () => {
-    console.log(votes);
     setVotes((prev) => {
       const newArray = [...prev];
       newArray[selected]++;
