@@ -1,5 +1,13 @@
 import { useState } from "react";
-
+const Anecdote = (props) => {
+  return (
+    <div>
+      <h1>{props.text}</h1>
+      <p>{props.anecdote}</p>
+      <p>Has {props.vote} votes</p>
+    </div>
+  );
+};
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -12,14 +20,41 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(
+    Array.from({ length: anecdotes.length }, () => 0)
+  );
 
   const randomNumber = () => {
-    setSelected(Math.floor(Math.random() * ((anecdotes.length-1) - 0 + 1) + 0));
+    setSelected(Math.floor(Math.random() * (anecdotes.length - 1 - 0 + 1) + 0));
+  };
+
+  const vote = () => {
+    console.log(votes);
+    setVotes((prev) => {
+      const newArray = [...prev];
+      newArray[selected]++;
+      return newArray;
+    });
+  };
+
+  const getPopularVote = () => {
+    return votes.indexOf(Math.max(...votes));
   };
   return (
     <div>
-      <h1>{anecdotes[selected]}</h1>
+      <Anecdote
+        text="Anecdote of the day"
+        anecdote={anecdotes[selected]}
+        vote={votes[selected]}
+      />
+      <button onClick={vote}>vote</button>
       <button onClick={randomNumber}>next anecdote</button>
+
+      <Anecdote
+        text="Anecdote with most votes"
+        anecdote={anecdotes[getPopularVote()]}
+        vote={votes[getPopularVote()]}
+      />
     </div>
   );
 };
