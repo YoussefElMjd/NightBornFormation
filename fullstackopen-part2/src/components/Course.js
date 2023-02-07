@@ -1,21 +1,26 @@
-const Part = (props) => {
-  return (
-    <p>
-      {props.name} {props.exercise}
-    </p>
-  );
-};
+import { useState } from 'react'
 
-export const Course = (props) => {
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas' }
+  ]) 
+  const [newName, setNewName] = useState('')
+
   return (
     <div>
-      <h1>{props.course.name}</h1>
-      {props.course.parts.map((part) => (
-        <Part key={part.id} name={part.name} exercise={part.exercises} />
-      ))}
-      <p>Somme ={props.sommePart(props.course.parts)}</p>
+      <h2>Phonebook</h2>
+      <form>
+        <div>
+          name: <input />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      ...
     </div>
-  );
-};
+  )
+}
 
-export default Course;
+export default App

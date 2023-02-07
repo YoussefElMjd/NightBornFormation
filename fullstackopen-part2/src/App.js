@@ -1,69 +1,66 @@
-import { Course } from "./components/Course.js";
-
-const sommePart = (parts) => {
-  return parts.reduce((s, p) => s + p.exercises, 0);
-};
-
-const total = (courses) => {
-  let total = 0;
-  courses.forEach((element) => {
-    total += sommePart(element.parts);
-  });
-  return total;
-};
-
+import { useState } from "react";
+import { Filter } from "./components/Filter";
+import { PersonForm } from "./components/PersonForm";
+import { Persons } from "./components/Persons";
 const App = () => {
-  const courses = [
-    {
-      name: "Half Stack application development",
-      id: 1,
-      parts: [
-        {
-          name: "Fundamentals of React",
-          exercises: 10,
-          id: 1,
-        },
-        {
-          name: "Using props to pass data",
-          exercises: 7,
-          id: 2,
-        },
-        {
-          name: "State of a component",
-          exercises: 14,
-          id: 3,
-        },
-        {
-          name: "Redux",
-          exercises: 11,
-          id: 4,
-        },
-      ],
-    },
-    {
-      name: "Node.js",
-      id: 2,
-      parts: [
-        {
-          name: "Routing",
-          exercises: 3,
-          id: 1,
-        },
-        {
-          name: "Middlewares",
-          exercises: 7,
-          id: 2,
-        },
-      ],
-    },
-  ];
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "+32466666666" },
+  ]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState([]);
+  const [readFilter, setReadFilter] = useState("");
 
+  const handleOnChangeName = (event) => {
+    setNewName(event.target.value);
+  };
+  const handleOnChangeNumber = (event) => {
+    setNewNumber(event.target.value);
+  };
+  const handleOnChangeFilter = (event) => {
+    const personsToShow = persons.filter((persons) =>
+      persons.name.toLowerCase().includes(event.target.value.toLowerCase())
+    );
+
+    setFilter(personsToShow);
+    setReadFilter(event.target.value);
+  };
+
+  const addPersons = (event) => {
+    event.preventDefault();
+    const newPersons = {
+      name: newName,
+      number: newNumber,
+    };
+    if (persons.some((object) => object.name === newName)) {
+      alert(`${newPersons.name} is already added to phonebok`);
+    } else if (persons.some((object) => object.number === newNumber)) {
+      alert(`${newPersons.number} is already added to numbers`);
+    } else {
+      setPersons(persons.concat(newPersons));
+      setNewName("");
+    }
+  };
   return (
     <div>
-      {courses.map((course) => {
-        return <Course sommePart={sommePart} key={course.id} course={course} />;
-      })}
-      <h3>Total = {total(courses)}</h3>
+      <h2>Phonebook</h2>
+      <Filter readFilter={readFilter} handleOnChange={handleOnChangeFilter} />
+      <h1>Add a new</h1>
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        handleOnChangeNumber={handleOnChangeNumber}
+        handleOnChangeName={handleOnChangeName}
+        addPersons={addPersons}
+      />
+      <h2>Numbers</h2>
+      {filter.map((persons, i) => (
+        <Persons
+          key={persons.number}
+          name={persons.name}
+          number={persons.number}
+        />
+      ))}
     </div>
   );
 };
