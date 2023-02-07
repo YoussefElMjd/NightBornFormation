@@ -1,63 +1,30 @@
-const Header = (props) => {
-  console.log(props);
-  return <h1>{props.course}</h1>;
+import { useState } from "react";
+
+const Button = (props) => {
+  return <button onClick={props.increment}> {props.react.name}</button>;
 };
 
-const Part = (props) => {
-  return (
-    <div>
-      {props.part} {props.exercises}
-    </div>
-  );
+const Stats = (props) => {
+  return <p>{props.name + " " + props.click}</p>;
 };
-const Content = (props) => {
-  return (
-    <div>
-      <Part part={props.parts[0].name} exercice={props.parts[0].exercice} />
-      <Part part={props.parts[1].name} exercice={props.parts[1].exercice} />
-      <Part part={props.parts[2].name} exercice={props.parts[2].exercice} />
-    </div>
-  );
-};
-
-const Total = (props) => {
-  return (
-    <>
-      <p>
-        Number of exercises{" "}
-        {props.parts[0].exercises +
-          props.parts[1].exercises +
-          props.parts[2].exercises}
-      </p>
-    </>
-  );
-};
-
 const App = () => {
-  const course = {
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-      },
-    ],
-  };
+  // enregistrer les clics de chaque bouton dans un état différent
+  const [good, setGood] = useState({ name: "good", click: 0 });
+  const [neutral, setNeutral] = useState({ name: "neutral", click: 0 });
+  const [bad, setBad] = useState({ name: "bad", click: 0 });
 
   return (
-    <>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
-    </>
+    <div>
+      <h1> give feedback</h1>
+      <Button react={good} increment={() => setGood({...good,click : good.click+1})} />
+      <Button react={neutral} increment={() => setNeutral({...neutral,click : neutral.click+1})} />
+      <Button react={bad} increment={() => setBad({...bad,click : bad.click+1})} />
+
+      <h1>statistics</h1>
+      <Stats name={good.name} click={good.click} />
+      <Stats name={neutral.name} click={neutral.click} />
+      <Stats name={bad.name} click={bad.click} />
+    </div>
   );
 };
 
