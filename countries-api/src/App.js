@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { Filter } from "./components/Filter";
 import { Countries } from "./components/Countries";
+import { useFilter } from "./hooks/index";
 import axios from "axios";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
-  const [searchFilter, setSearchFilter] = useState("");
+  const searchFilter = useFilter();
   const [error, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (searchFilter !== "")
+    if (searchFilter.searchFilter !== "")
       axios
-        .get(`https://restcountries.com/v3.1/name/${searchFilter}`)
+        .get(`https://restcountries.com/v3.1/name/${searchFilter.searchFilter}`)
         .then((response) => {
           if (response.data.length > 10) {
             setErrorMessage("To many response give more detail");
@@ -24,20 +25,16 @@ const App = () => {
         .catch((error) => {
           console.log(error);
         });
-  }, [searchFilter]);
+  }, [searchFilter.searchFilter]);
 
-  const handleOnChange = (event) => {
-    setSearchFilter(event.target.value);
-  };
-
-  const handleOnClick = (event) => {
-    setSearchFilter(event.target.value);
-  };
   return (
     <div>
-      <Filter readFilter={searchFilter} handleOnChange={handleOnChange} />
+      <Filter
+        readFilter={searchFilter.searchFilter}
+        handleOnChange={searchFilter.onChange}
+      />
       <h3>{error}</h3>
-      <Countries countries={countries} handleOnClick={handleOnClick} />
+      <Countries countries={countries} handleOnClick={searchFilter.onChange} />
     </div>
   );
 };

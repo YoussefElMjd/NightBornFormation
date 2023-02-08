@@ -1,24 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
 import { ErrorMessage } from "./components/Error";
-import { getAll, create, update, deletePhoneBook } from "./services/phonebook";
+import { useRessource } from "./hooks/index";
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [persons, service] = useRessource("http://localhost:3001/persons");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState([]);
   const [readFilter, setReadFilter] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
-  useEffect(() => {
-    getAll().then((response) => {
-      setPersons(response);
-    });
-  }, []);
 
   const handleOnChangeName = (event) => {
     setNewName(event.target.value);
@@ -44,14 +38,13 @@ const App = () => {
     if (persons.some((object) => object.name === newName)) {
       const person = persons.find((person) => person.name === newName);
       if (window.confirm("Are you sure you want to update"))
-        update(person.id, { ...person, number: newNumber });
+        service.update(person.id, { ...person, number: newNumber });
     } else if (persons.some((object) => object.number === newNumber)) {
       const person = persons.find((person) => person.number === newNumber);
       if (window.confirm("Are you sure you want to update"))
-        update(person.id, { ...person, name: newName });
+        service.update(person.id, { ...person, name: newName });
     } else {
-      create(newPersons);
-      setPersons(persons.concat(newPersons));
+      service.create(newPersons);
       setNewName("");
       setNewNumber("");
       setSuccessMessage(`Added successfully for ${newPersons.name}`);
@@ -61,18 +54,12 @@ const App = () => {
 
   const deletePersons = (event) => {
     if (window.confirm("Are you sure you want to delete"))
-      deletePhoneBook(event.target.value)
-        .then(() => {
-          setPersons(
-            persons.filter((object) => object.id !== event.target.value)
-          );
-        })
-        .catch((e) => {
-          setError(
-            `Information of ${event.target.value} has already been removed from server`
-          );
-          setTimeout(() => setError(""), 5000);
-        });
+      service.remove(event.target.value).catch((e) => {
+        setError(
+          `Information of ${event.target.value} has already been removed from server`
+        );
+        setTimeout(() => setError(""), 5000);
+      });
   };
   return (
     <div>
