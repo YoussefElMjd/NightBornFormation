@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
-import axios from "axios";
+import { getAll, create, update, deletePhoneBook } from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,10 +12,11 @@ const App = () => {
   const [readFilter, setReadFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    getAll().then((response) => {
+      setPersons(response);
     });
-  },[]);
+  }, []);
+
   const handleOnChangeName = (event) => {
     setNewName(event.target.value);
   };
@@ -38,13 +39,26 @@ const App = () => {
       number: newNumber,
     };
     if (persons.some((object) => object.name === newName)) {
-      alert(`${newPersons.name} is already added to phonebok`);
+      const person = persons.find((person) => person.name === newName);
+      if (window.confirm("Are you sure you want to update"))
+        update(person.id, { ...person, number: newNumber });
     } else if (persons.some((object) => object.number === newNumber)) {
-      alert(`${newPersons.number} is already added to numbers`);
+      const person = persons.find((person) => person.number === newNumber);
+      if (window.confirm("Are you sure you want to update"))
+        update(person.id, { ...person, name: newName });
     } else {
+      create(newPersons);
       setPersons(persons.concat(newPersons));
       setNewName("");
+      setNewNumber("");
     }
+  };
+
+  const deletePersons = (event) => {
+    if (window.confirm("Are you sure you want to delete"))
+      deletePhoneBook(event.target.value).then(() => {
+        setPersons(persons.filter((object) => object.id !== event.target.value));
+      });
   };
   return (
     <div>
@@ -64,6 +78,8 @@ const App = () => {
           key={persons.number}
           name={persons.name}
           number={persons.number}
+          id={persons.id}
+          deletePersons={deletePersons}
         />
       ))}
     </div>
