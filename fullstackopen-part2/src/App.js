@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
+import { ErrorMessage } from "./components/Error";
 import { getAll, create, update, deletePhoneBook } from "./services/phonebook";
 
 const App = () => {
@@ -10,6 +11,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState([]);
   const [readFilter, setReadFilter] = useState("");
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     getAll().then((response) => {
@@ -51,18 +54,35 @@ const App = () => {
       setPersons(persons.concat(newPersons));
       setNewName("");
       setNewNumber("");
+      setSuccessMessage(`Added successfully for ${newPersons.name}`);
+      setTimeout(() => setSuccessMessage(""), 5000);
     }
   };
 
   const deletePersons = (event) => {
     if (window.confirm("Are you sure you want to delete"))
-      deletePhoneBook(event.target.value).then(() => {
-        setPersons(persons.filter((object) => object.id !== event.target.value));
-      });
+      deletePhoneBook(event.target.value)
+        .then(() => {
+          setPersons(
+            persons.filter((object) => object.id !== event.target.value)
+          );
+        })
+        .catch((e) => {
+          setError(
+            `Information of ${event.target.value} has already been removed from server`
+          );
+          setTimeout(() => setError(""), 5000);
+        });
   };
   return (
     <div>
       <h2>Phonebook</h2>
+      <ErrorMessage message={error} color="red" background="lightred" />
+      <ErrorMessage
+        message={successMessage}
+        color="green"
+        background="lightgreen"
+      />
       <Filter readFilter={readFilter} handleOnChange={handleOnChangeFilter} />
       <h1>Add a new</h1>
       <PersonForm
