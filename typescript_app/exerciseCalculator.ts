@@ -8,7 +8,7 @@ interface Result {
   average: number;
 }
 
-interface Entry {
+export interface Entry {
   target: number;
   values: number[];
 }
@@ -25,9 +25,9 @@ const parseArgumentsCalc = (args: string[]): Entry => {
     throw new Error("Provided values were not numbers !");
   }
 };
-const calculateExercises = (exo: number[], target: number): Result => {
-  let trainingDays: number = exo.filter((x) => x != 0).length;
-  let average: number = exo.reduce((s, p) => s + p, 0) / exo.length;
+export const calculateExercises = (exo: number[], target: number): Result => {
+  const trainingDays: number = exo.filter((x) => x != 0).length;
+  const average: number = exo.reduce((s, p) => s + p, 0) / exo.length;
 
   return {
     periodLength: exo.length,
@@ -41,10 +41,10 @@ const calculateExercises = (exo: number[], target: number): Result => {
 };
 
 try{
-    let input = parseArgumentsCalc(process.argv)
+    const input = parseArgumentsCalc(process.argv);
     console.log(calculateExercises(input.values,input.target));
 }catch(e:unknown){
     if(e instanceof Error){
-        console.log(e.message)
+        console.log(e.message);
     }
 }

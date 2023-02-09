@@ -15,8 +15,8 @@ const parseArguments = (args: string[]): bmiValue => {
     throw new Error("Provided values were not numbers !");
   }
 };
-const calculateBmi = (taille: number, poids: number) => {
-  let bmi: number = poids / (((taille / 100) * taille) / 100);
+export const calculateBmi = (taille: number, poids: number): string => {
+  const bmi: number = poids / (((taille / 100) * taille) / 100);
 
   if (bmi < 16) {
     return "Underweight (Severe thinness)";
@@ -35,6 +35,7 @@ const calculateBmi = (taille: number, poids: number) => {
   } else if (bmi >= 40) {
     return "Obese (Class III)";
   }
+  return "";
 };
 
 try {
@@ -45,4 +46,3 @@ try {
     console.log(e.message);
   }
 }
-
