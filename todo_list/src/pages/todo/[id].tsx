@@ -15,21 +15,28 @@ const TodoData = ({ id, title, description, checked }: Todo) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async (context) => {
-  const paths = await getAllTodoIds();
-  return { paths, fallback: false };
+  try {
+    const paths = await getAllTodoIds();
+    return { paths, fallback: false };
+  } catch (e) {
+    return { paths: [], fallback: false };
+  }
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const todoData = await getTodoData(params?.id as string);
-  console.log(todoData);
-  return {
-    props: {
-      id: todoData?.id,
-      title: todoData?.title,
-      description: todoData?.description,
-      checked: todoData?.checked,
-    },
-  };
+  try {
+    const todoData = await getTodoData(params?.id as string);
+    return {
+      props: {
+        id: todoData?.id,
+        title: todoData?.title,
+        description: todoData?.description,
+        checked: todoData?.checked,
+      },
+    };
+  } catch (e) {
+    return { props: {}, revalidate: 0 };
+  }
 };
 
 export default TodoData;
