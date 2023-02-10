@@ -2,10 +2,9 @@ import Date from "@/components/date";
 import Layout from "../../components/layout";
 import Data, { getAllPostIds, getPostData } from "../../lib/posts";
 import utilStyles from "@/styles/utils.module.css";
+import { GetStaticPaths, GetStaticProps } from "next";
 
-interface Param{
-  id: number;
-}
+
 export default function Post({ postData }: { postData: Data }) {
   return (
     <Layout home>
@@ -19,20 +18,20 @@ export default function Post({ postData }: { postData: Data }) {
   );
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async (context) => {
   const paths = getAllPostIds();
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export async function getStaticProps({ params } : {params: Param }) {
+export const getStaticProps: GetStaticProps = async ({params}) => {
   // Fetch necessary data for the blog post using params.id
-  const postData = getPostData(params.id);
+  const postData = getPostData(params?.id as string);
   return {
     props: {
       postData,
     },
   };
-}
+};

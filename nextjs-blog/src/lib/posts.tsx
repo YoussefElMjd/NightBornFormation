@@ -25,7 +25,7 @@ export function getSortedPostsData(): Data[] {
     }
   });
 }
-export function getPostData(id: number) {
+export function getPostData(id: string) {
   const allPostsData: Data[] = [
     {
       id: "1",
@@ -38,10 +38,9 @@ export function getPostData(id: number) {
       date: "2023-02-06",
     },
   ];
-  
   // Combine the data with the id
   return {
-    ...allPostsData[id-1],
+    ...allPostsData[Number(id)-1],
   };
 }
 export function getAllPostIds() {
